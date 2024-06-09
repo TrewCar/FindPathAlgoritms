@@ -27,7 +27,7 @@ namespace AlgorimsFindPath.SearchPath
         protected HashSet<Point> already = new HashSet<Point>();
 
         public abstract bool Step();
-        protected virtual List<Point> getNeighbor(int x, int y)
+        protected List<Point> getNeighbor(int x, int y)
         {
             return neighbor.getNeighbor(map, x, y);
         }
