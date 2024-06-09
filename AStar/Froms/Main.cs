@@ -28,6 +28,10 @@ namespace AlgorimsFindPath.Froms
         {
             new FindPathForm((m, s, e) => new AStar(m, s, e, GetNeighbor()), "AStar").Show();
         }
+        private void startDijkstra_Click(object sender, EventArgs e)
+        {
+            new FindPathForm((m, s, e) => new Dijkstra(m, s, e, GetNeighbor()), "Dijkstra").Show();
+        }
 
         private INeighbor GetNeighbor()
         {

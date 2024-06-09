@@ -34,6 +34,7 @@
             groupBox2 = new GroupBox();
             Neighbor8RB = new RadioButton();
             Neighbor4RB = new RadioButton();
+            startDijkstra = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -60,6 +61,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(startDijkstra);
             groupBox1.Controls.Add(startBreadthFS);
             groupBox1.Controls.Add(startAStar);
             groupBox1.Location = new Point(12, 12);
@@ -102,6 +104,16 @@
             Neighbor4RB.Text = "4 neighbors";
             Neighbor4RB.UseVisualStyleBackColor = true;
             // 
+            // startDijkstra
+            // 
+            startDijkstra.Location = new Point(136, 51);
+            startDijkstra.Name = "startDijkstra";
+            startDijkstra.Size = new Size(75, 23);
+            startDijkstra.TabIndex = 2;
+            startDijkstra.Text = "Dijkstra";
+            startDijkstra.UseVisualStyleBackColor = true;
+            startDijkstra.Click += startDijkstra_Click;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -126,5 +138,6 @@
         private GroupBox groupBox2;
         private RadioButton Neighbor8RB;
         private RadioButton Neighbor4RB;
+        private Button startDijkstra;
     }
 }
