@@ -182,7 +182,9 @@ namespace AlgorimsFindPath.Froms
             IsStart = true;
             SetStateStartButton();
             aStar = null;
-            Clear_Click(null, null);
+            ReplaceTwosWithZeros();
+            DrawMap();
+            DrawStartEndPoint();
         }
     }
 }
