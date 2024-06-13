@@ -128,7 +128,10 @@ namespace AlgorimsFindPath.Froms
             if (aStar.Step())
             {
                 timer1.Stop();
-                aStar = null;
+				DrawMap();
+				DrawStartEndPoint();
+				Tick();
+				aStar = null;
                 SetStateStartButton();
                 return;
             }

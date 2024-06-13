@@ -4,52 +4,74 @@ namespace AlgorimsFindPath.SearchPath
 {
     public class AStar : FindPath
     {
-        public AStar(int[,] map, Point startPos, Point endPos, INeighbor neighbor) : base(map, startPos, endPos, neighbor)
-        {
-            queue.Add((0, startPos));
-        }
-        /// <summary>
-        /// Очередь с сортировки по ключу dist
-        /// </summary>
-        protected SortedSet<(float dist, Point crd)> queue 
-            = new SortedSet<(float dist, Point crd)>(Comparer<(float dist, Point crd)>.Create((a, b) =>
-        {
-            int result = a.dist.CompareTo(b.dist);
-            return result == 0 ? a.crd.GetHashCode().CompareTo(b.crd.GetHashCode()) : result;
-        }));
+		// Приоритетная очередь для хранения узлов для проверки
+		private PriorityQueue<(Point point, float priority), float> openSet;
+		// Словарь для хранения стоимости пути от начальной точки до текущей
+		private Dictionary<Point, float> gScore;
+		// Словарь для хранения эвристической стоимости пути от текущей точки до конечной
+		private Dictionary<Point, float> fScore;
 
-        public override bool Step()
-        {
-            if (queue.Count == 0)
-            {
-                return true; // No path found
-            }
+		public AStar(int[,] map, Point startPos, Point endPos, INeighbor neighbor)
+			: base(map, startPos, endPos, neighbor)
+		{
+			openSet = new PriorityQueue<(Point point, float priority), float>();
+			gScore = new Dictionary<Point, float>();
+			fScore = new Dictionary<Point, float>();
 
-            now = queue.Min.Item2;
-            queue.Remove(queue.Min);
+			// Начальная точка имеет стоимость 0
+			gScore[startPos] = 0;
+			// Эвристическая оценка для начальной точки
+			fScore[startPos] = calcDisc(startPos, endPos);
 
-            if (now.Equals(endPos))
-            {
-                return true; // Path found
-            }
+			// Добавляем начальную точку в очередь
+			openSet.Enqueue((startPos, fScore[startPos]), fScore[startPos]);
+		}
 
-            already.Add(now);
+		public override bool Step()
+		{
+			if (openSet.Count == 0)
+			{
+				return true; // Path not found
+			}
 
-            var neighbors = getNeighbor(now.X, now.Y);
-            foreach (Point neighbor in neighbors)
-            {
-                if (already.Contains(neighbor))
-                    continue;
+			var current = openSet.Dequeue().point;
+			now = current;
 
-                float distance = calcDisc(endPos, neighbor) + calcDisc(startPos, neighbor); // f = g + h
-                queue.Add((distance, neighbor));
-                if (!Path.ContainsKey(neighbor))
-                {
-                    Path[neighbor] = now;
-                }
-            }
+			if (current.Equals(endPos))
+			{
+				return true; // Path found
+			}
 
-            return false;
-        }
-    }
+			already.Add(current);
+
+			foreach (var neighbor in getNeighbor(current.X, current.Y))
+			{
+				if (already.Contains(neighbor))
+				{
+					continue;
+				}
+
+				// Вычисляем стоимость пути до соседа
+				float tentativeGScore = gScore[current] + calcDisc(current, neighbor);
+
+				// Если найден более короткий путь до соседа или сосед не был проверен
+				if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
+				{
+					// Обновляем путь и стоимости
+					Path[neighbor] = current;
+					gScore[neighbor] = tentativeGScore;
+					fScore[neighbor] = gScore[neighbor] + calcDisc(neighbor, endPos);
+
+					// Добавляем соседа в очередь, если он еще не в ней
+					if (!openSet.UnorderedItems.Any(item => item.Element.point.Equals(neighbor)))
+					{
+						openSet.Enqueue((neighbor, fScore[neighbor]), fScore[neighbor]);
+					}
+				}
+			}
+
+			// Продолжаем поиск
+			return false;
+		}
+	}
 }
